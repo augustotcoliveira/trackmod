@@ -92,9 +92,16 @@ class VitrineScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     _CardLargo(mod: _mods[2]),
+                    const SizedBox(height: 32),
+                    
+                    // Projetos da Comunidade
+                    Text('Projetos da Comunidade', style: AppText.headline(size: 22)),
+                    const SizedBox(height: 12),
+                    const _CarrosselProjetos(),
+                    const SizedBox(height: 32),
+
                     // Convite só para visitantes
                     if (!logado) ...[
-                      const SizedBox(height: 24),
                       _ConviteEntrar(onEntrar: onEntrar),
                     ],
                   ],
@@ -107,6 +114,171 @@ class VitrineScreen extends StatelessWidget {
     );
   }
 }
+
+// -----------------------------------------------------------------------------
+// SEÇÃO: PROJETOS DA COMUNIDADE
+// -----------------------------------------------------------------------------
+
+class _ProjetoComunidade {
+  final String nome;
+  final String piloto;
+  final String potencia;
+  final String imageUrl;
+  final List<String> mods;
+
+  const _ProjetoComunidade(this.nome, this.piloto, this.potencia, this.imageUrl, this.mods);
+}
+
+const _projetos = [
+  _ProjetoComunidade(
+    'Skyline GT-R R34',
+    'Lucas S.',
+    '720 HP',
+    'https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=600&auto=format&fit=crop',
+    ['Turbina Single Precision 6266', 'Módulo Haltech Elite', 'Escape Invidia Titanium']
+  ),
+  _ProjetoComunidade(
+    'Porsche 911 GT3 RS',
+    'Rafael M.',
+    '525 HP',
+    'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?q=80&w=600&auto=format&fit=crop',
+    ['Mantecal Akrapovic', 'Filtro BMC', 'Pastilhas Pagid RSL29']
+  ),
+  _ProjetoComunidade(
+    'Golf GTI Mk7.5',
+    'Bruna K.',
+    '380 HP',
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQovmsnXaHYhlw8YplZtLoSx3j7m9dXj-CXw_UKdJUR4l43cEmQtNNfJTX&s=10',
+    ['Remap Stage 3', 'Turbina IS38', 'Intercooler Wagner Tuning']
+  ),
+  _ProjetoComunidade(
+    'Civic Type R FL5',
+    'Thiago C.',
+    '410 HP',
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSoM1xr_0O6Fd-FtZMVV2D8OCHrJ-zRlboZKUYgGGnixZNIufMqFPrdU2yH&s=10',
+    ['Intake Eventuri', 'Hondata FlashPro', 'Rodas Spoon SW388']
+  ),
+];
+
+class _CarrosselProjetos extends StatelessWidget {
+  const _CarrosselProjetos();
+
+  void _abrirDetalhes(BuildContext context, _ProjetoComunidade projeto) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppColors.surfaceContainerHigh,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (ctx) => DraggableScrollableSheet(
+        initialChildSize: 0.7,
+        minChildSize: 0.5,
+        maxChildSize: 0.9,
+        expand: false,
+        builder: (_, scrollController) => ListView(
+          controller: scrollController,
+          padding: const EdgeInsets.all(0),
+          children: [
+            AspectRatio(
+              aspectRatio: 16 / 9,
+              child: Image.network(projeto.imageUrl, fit: BoxFit.cover),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(projeto.nome, style: AppText.headline(size: 22)),
+                      Text(projeto.potencia, style: AppText.headline(size: 18, color: AppColors.secondary)),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text('Piloto: ${projeto.piloto}', style: AppText.label(size: 12)),
+                  const SizedBox(height: 24),
+                  Text('LISTA DE MODIFICAÇÕES', style: AppText.label(size: 11)),
+                  const SizedBox(height: 12),
+                  for (final mod in projeto.mods)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.check_circle, size: 16, color: AppColors.primary),
+                          const SizedBox(width: 8),
+                          Expanded(child: Text(mod, style: AppText.body(size: 14))),
+                        ],
+                      ),
+                    ),
+                  const SizedBox(height: 24),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () => Navigator.pop(ctx),
+                      icon: const Icon(Icons.close),
+                      label: const Text('FECHAR'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 220,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: _projetos.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 16),
+        itemBuilder: (context, index) {
+          final p = _projetos[index];
+          return GestureDetector(
+            onTap: () => _abrirDetalhes(context, p),
+            child: Container(
+              width: 160,
+              clipBehavior: Clip.antiAlias,
+              decoration: BoxDecoration(
+                color: AppColors.surfaceContainer,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: Image.network(p.imageUrl, fit: BoxFit.cover),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(p.nome, maxLines: 1, overflow: TextOverflow.ellipsis, style: AppText.body(size: 14).copyWith(fontWeight: FontWeight.w700)),
+                        const SizedBox(height: 4),
+                        Text(p.potencia, style: AppText.label(size: 11, color: AppColors.secondary)),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
 
 /// Foto de destaque. Salve a imagem em assets/images/drift_master.jpg.
 /// Se o arquivo não existir, aparece um degradê no lugar (o app não quebra).
@@ -266,162 +438,41 @@ class _CardLargo extends StatelessWidget {
   final _ModDemo mod;
   const _CardLargo({required this.mod});
 
-  void _abrirDetalhes(BuildContext context) {
-    bool modoPista = false;
-
-    showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: AppColors.surfaceContainerHigh,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setModalState) {
-          final psiDianteira = modoPista ? '55 PSI' : '40 PSI';
-          final psiTraseira = modoPista ? '50 PSI' : '35 PSI';
-          final altura = modoPista ? '20 MM' : '55 MM';
-          final textoBotao = modoPista
-              ? 'DESATIVAR MODO PISTA'
-              : 'ATIVAR MODO PISTA (LOW RIDE)';
-
-          return SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 44,
-                        height: 44,
-                        decoration: BoxDecoration(
-                          color: AppColors.surfaceContainer,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Icon(mod.icone, color: AppColors.primary),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(mod.nome, style: AppText.headline(size: 16)),
-                            Text(
-                              modoPista ? 'Modo Pista Ativo 🏎️' : mod.detalhe,
-                              style: AppText.label(
-                                size: 12,
-                                color: modoPista
-                                    ? AppColors.racingRed
-                                    : AppColors.secondary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  const Divider(color: AppColors.surfaceContainerHighest),
-                  const SizedBox(height: 12),
-                  Text('TELEMETRIA DA SUSPENSÃO A AR',
-                      style: AppText.label(size: 11)),
-                  const SizedBox(height: 12),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _itemTelemetria('DIANTEIRA', psiDianteira, Icons.tune),
-                      _itemTelemetria('TRASEIRA', psiTraseira, Icons.tune),
-                      _itemTelemetria('ALTURA', altura, Icons.height),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      setModalState(() => modoPista = !modoPista);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          duration: const Duration(seconds: 2),
-                          content: Text(
-                            modoPista
-                                ? '⚡ Suspensão rebaixada: 20mm (Modo Pista Ativado!)'
-                                : '🚗 Suspensão elevada: 55mm (Modo Rua Restaurado)',
-                          ),
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: modoPista
-                          ? AppColors.racingRed
-                          : AppColors.primary,
-                      foregroundColor: Colors.white,
-                    ),
-                    icon: Icon(modoPista ? Icons.check_circle : Icons.speed),
-                    label: Text(textoBotao),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  static Widget _itemTelemetria(String rotulo, String valor, IconData icone) {
-    return Column(
-      children: [
-        Icon(icone, size: 20, color: AppColors.primary),
-        const SizedBox(height: 4),
-        Text(valor,
-            style: AppText.headline(size: 16, color: AppColors.onSurface)),
-        Text(rotulo, style: AppText.label(size: 10)),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    final raio = BorderRadius.circular(12);
-    return Material(
-      color: AppColors.surfaceContainer,
-      borderRadius: raio,
-      child: InkWell(
-        borderRadius: raio,
-        onTap: () => _abrirDetalhes(context),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: AppColors.surfaceContainerHigh,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(mod.icone, color: AppColors.primary),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      mod.nome,
-                      style: AppText.label(size: 14, color: AppColors.onSurface)
-                          .copyWith(fontWeight: FontWeight.w700),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(mod.detalhe, style: AppText.label(size: 11)),
-                  ],
-                ),
-              ),
-              const Icon(Icons.chevron_right, color: AppColors.onSurfaceVariant),
-            ],
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceContainer,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: AppColors.surfaceContainerHigh,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(mod.icone, color: AppColors.primary),
           ),
-        ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  mod.nome,
+                  style: AppText.label(size: 14, color: AppColors.onSurface)
+                      .copyWith(fontWeight: FontWeight.w700),
+                ),
+                const SizedBox(height: 4),
+                Text(mod.detalhe, style: AppText.label(size: 11)),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
