@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "14068312218",
+    "project_id": "trackmod-48059",
+    "storage_bucket": "trackmod-48059.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:14068312218:android:2b989e370889769c35d723",
+        "android_client_info": {
+          "package_name": "br.unicamp.trackmod.trackmod"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "14068312218-tigoqol3li62os75d8fi1bcprmjbmb3i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBihZSPiQy-rEKjMXsG-YNNvM11gSlRTxo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "14068312218-tigoqol3li62os75d8fi1bcprmjbmb3i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
